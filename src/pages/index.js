@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import Button from '../components/Button'
 import Input from '../components/Input'
+import Checkbox from '../components/Checkbox'
 
 export default function Home() {
   const [valueInput, setValueInput ] = useState('')
@@ -23,6 +24,8 @@ export default function Home() {
         onChange={handleInput}
       />
       <Input disabled value='Hola' />
+      <Checkbox id='20' label='React' />
+      <Checkbox id='12' label='Angular' error='Error' disabled/>
     </div>
   )
 }
