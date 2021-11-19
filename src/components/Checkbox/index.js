@@ -15,8 +15,10 @@ const Label = styled.label`
   border-radius: 10px;
 
   ${props => props.disabled && css`
+    opacity: 0.5;
     cursor: not-allowed;
-    color: #c3c3c3;
+    color: ${props.theme.color.gray.dark};
+    
   `}
 `;
 
@@ -59,6 +61,7 @@ const Input = styled.input`
   font-size: initial;
   opacity: 0;
   vertical-align: text-top;
+  
   & + ${LabelText} {
     &:before,
     &:after {
@@ -71,7 +74,7 @@ const Input = styled.input`
       display: block;
       
       ${props => props.disabled && css`
-        background: #EAEAEA;
+        background: ${props.theme.color.disabledGrayOpacity20};
       `}
     }
     &:before {
@@ -81,23 +84,28 @@ const Input = styled.input`
       border-radius: 100%;
     }
   }
+  
   & + ${LabelText}:before {
     box-shadow: #B4B4B4 0 0 0 1px inset;
 
     ${props => props.disabled && css`
-        box-shadow: #EAEAEA 0 0 0 1px inset;
-      `}
+      box-shadow: #EAEAEA 0 0 0 1px inset;
+    `}
   }
+  
   &:focus + ${LabelText}:before {
     box-shadow: #B4B4B4 0 0 0 1px inset;
   }
+  
   &:checked + ${LabelText}:before {
     box-shadow: #B4B4B4 0 0 0 1px inset;
   }
+  
   &:checked:focus + ${LabelText}:before {
     box-shadow: #B4B4B4 0 0 0 1px inset,
     rgb(206 206 206 / 51%) 0 0 5px 2px;
   }
+  
   & + ${LabelText}:after {
     transition: all 150ms ease-out;
     transform: scale3d(0, 0, 1);
@@ -106,6 +114,7 @@ const Input = styled.input`
     width: 20px;
     opacity: 0;
   }
+  
   &:checked + ${LabelText}:after {
     transform: scale3d(1, 1, 1);
     background: #28e288;
