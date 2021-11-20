@@ -35,6 +35,7 @@ const ButtonStyled = styled.button`
   white-space: nowrap;
   text-decoration: none;
   transition: all 150ms ease-out;
+  font-family: ${(props) => props.theme.font?.family?.regular};
 
   padding: 0.6rem 1rem;
   color: ${(props) => props.theme.color.secondary};

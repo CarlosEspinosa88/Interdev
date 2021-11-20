@@ -1,8 +1,10 @@
-import { Global, css } from '@emotion/react';
+import { Global, css } from '@emotion/react'
+import { fontFaces } from './fontFaces'
 
 export const globalStyles = (
   <Global
     styles={css`
+      ${fontFaces}
       html,
       body {
         margin: 0;

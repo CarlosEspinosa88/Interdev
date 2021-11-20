@@ -24,7 +24,8 @@ const StyledInput = styled.input`
   &[disabled] {
     cursor: not-allowed;
     box-shadow: none;
-    0.01rem solid rgb(180 180 180 / 40%);
+    border: 0.01rem solid rgb(180 180 180 / 40%);
+    color: ${(props) => props.theme.color?.gray?.light};
  
     ::placeholder {
       color: rgb(0 0 0 / 15%);
@@ -48,7 +49,7 @@ export const StyledInputWrapper = styled.div`
     line-height: 1rem;
     padding: 0.6rem 1rem;
     border-radius: 0.3rem;
-    color: ${(props) => props.theme.color?.gray?.light};
+    color: ${(props) => props.theme.color?.gray?.dark};
     font-family: ${(props) => props.theme.font?.family?.regular};
     border: 0.1rem solid ${(props) => props.theme.color?.gray?.light};
     transition: all 150ms ease-out;
