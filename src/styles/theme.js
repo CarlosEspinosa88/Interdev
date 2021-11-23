@@ -1,3 +1,5 @@
+import { fontFamilies } from './fontFamilies';
+
 export const theme = {
   color: {
     primary: '#28E288',
@@ -13,17 +15,17 @@ export const theme = {
     secondaryGreenOpacity90: 'rgb(0 90 90 / 90%)',
     disabledGrayOpacity20: 'rgb(0 0 0 / 20%)',
   },
-  // font: {
-  //   family: {
-  //     bold: fontFamilies.bold,
-  //     regular: fontFamilies.regular,
-  //   },
-  //   size: {
-  //     small: fontSizes.small,
-  //     medium: fontSizes.medium,
-  //     large: fontSizes.large,
-  //   },
-  // },
+  font: {
+    family: {
+      bold: fontFamilies.bold,
+      regular: fontFamilies.regular,
+    },
+    // size: {
+    //   small: fontSizes.small,
+    //   medium: fontSizes.medium,
+    //   large: fontSizes.large,
+    // },
+  },
   // shadow: {
   //   lightGrayOpacity10: boxShadows.lightGray,
   // },

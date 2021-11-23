@@ -4,11 +4,15 @@ import { css } from '@emotion/react'
 const Label = styled.label`
   cursor: pointer;
   font-size: 1rem;
-  font-weight: bold;
   position: relative;
   height: 2em;
   display: flex;
   align-items: center;
+  font-family: ${(props) => props.theme.font?.family?.regular};
+  padding: 20px;
+  width: 150px;
+  background: #dfdfdf3b;
+  border-radius: 10px;
 
   ${props => props.disabled && css`
     cursor: not-allowed;
@@ -35,18 +39,23 @@ const OptionalText = styled.span`
 
 const Error = styled.span`
   font-weight: normal;
-  font-size: 1rem;
+  font-size: .8rem;
   color: red;
   margin-left: 6px;
   height: 2em;
   display: flex;
   align-items: center;
+  font-family: ${(props) => props.theme.font?.family?.regular};
+  position: relative;
+  right: 140px;
+  top: 18px;
 `;
 
 const LabelText = styled.span``;
 
 const Input = styled.input`
-  margin: 0 1.4em 0 0;
+  width: 30px;
+  margin: 0 0.4em 0 0;
   font-size: initial;
   opacity: 0;
   vertical-align: text-top;
@@ -54,8 +63,8 @@ const Input = styled.input`
     &:before,
     &:after {
       position: absolute;
-      top: 0;
-      left: 0;
+      top: 20px;
+      left: 15px;
       height: 2em;
       width: 2em;
       content: '';
@@ -101,7 +110,6 @@ const Input = styled.input`
     transform: scale3d(1, 1, 1);
     background: #28e288;
     opacity: 1;
-
   }
 `;
 
@@ -142,14 +150,6 @@ function Checkbox({
     </CheckboxWrapper>
   );
 }
-
-// Checkbox.propTypes = {
-//   appearance: PropTypes.oneOf(['primary', 'secondary']),
-//   id: PropTypes.string.isRequired,
-//   label: PropTypes.string.isRequired,
-//   hideLabel: PropTypes.bool,
-//   error: PropTypes.string,
-// };
 
 Checkbox.defaultProps = {
   hideLabel: false,

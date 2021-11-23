@@ -4,10 +4,15 @@ import Input from '../components/Input'
 import Checkbox from '../components/Checkbox'
 
 export default function Home() {
-  const [valueInput, setValueInput ] = useState('')
+  const [valueInput, setValueInput] = useState('')
+  const [valueCheckbox, setValueCheckbox] = useState(false)
 
   function handleInput(event) {
     setValueInput(event.target.value)
+  }
+
+  function handleCheckbox() {
+    setValueCheckbox((prevState) => !prevState)
   }
 
   return (
@@ -15,7 +20,7 @@ export default function Home() {
       <Button>Button</Button>
       <Button loading={+true}>Button with long text</Button>
       <Button loading={+false} disabled={true}>Disabled</Button>
-      <Input hasError errorMessage='Obligatorio' />
+      <Input hasError errorMessage='Requerido' />
       <Input 
         required
         value={valueInput}
@@ -23,9 +28,9 @@ export default function Home() {
         placeholder='Placeholder'
         onChange={handleInput}
       />
-      <Input disabled value='Hola' />
-      <Checkbox id='20' label='React' />
-      <Checkbox id='12' label='Angular' error='Error' disabled/>
+      <Input placeholder='Placeholder' value='Hola' disabled />
+      <Checkbox id='20' label='React' error='Requerido' onChange={handleCheckbox} checked={valueCheckbox} />
+      <Checkbox id='12' label='Angular' disabled/>
     </div>
   )
 }
