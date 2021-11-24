@@ -3,6 +3,7 @@ import Button from '../components/Button'
 import Input from '../components/Input'
 import SelectInput from '../components/SelectInput'
 import Checkbox from '../components/Checkbox'
+import { OPTIONS } from '../constanst'
 
 export default function Home() {
   const [valueInput, setValueInput ] = useState('')
@@ -21,7 +22,7 @@ export default function Home() {
     setValueSelect(event.target.value)
   }
 
-  const options = [
+  const OPTIONS = [
     {
       label: "Apple",
       value: "apple",
@@ -54,13 +55,19 @@ export default function Home() {
         onChange={handleInput}
       />
       <Input disabled value='Hola' />
-      <Checkbox id='20' label='React' error='Requerido' onChange={handleCheckbox} checked={valueCheckbox} />
+      <Checkbox 
+        id='20' 
+        label='React' 
+        error='Requerido'
+        onChange={handleCheckbox}
+        checked={valueCheckbox}
+      />
       <Checkbox id='12' label='Angular' disabled/>
-      <SelectInput disabled options={options} />
+      <SelectInput disabled options={OPTIONS} />
       <SelectInput 
         id='Select-id'
         name='Frutas'
-        options={options}
+        options={OPTIONS}
         value={valueSelect}
         onChange={handleSelect}
         hasError

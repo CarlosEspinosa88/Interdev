@@ -4,7 +4,26 @@ export const TYPE = {
   RESET: 'reset',
 };
 
-export const fonts = [
+const OPTIONS = [
+  {
+    label: "Apple",
+    value: "apple",
+  },
+  {
+    label: "Mango",
+    value: "mango",
+  },
+  {
+    label: "Banana",
+    value: "banana",
+  },
+  {
+    label: "Pineapple",
+    value: "pineapple",
+  },
+];
+
+export const FONTS = [
   {
     rel: 'preload',
     href: '/fonts/regular/dm-sans.woff2',
