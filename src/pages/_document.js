@@ -1,14 +1,14 @@
 import Document, {
   Html, Head, Main, NextScript,
 } from 'next/document';
-import { fonts } from '../constanst';
+import { FONTS } from '../constanst';
 
 class AppDocument extends Document {
   render() {
     return (
       <Html lang="en">
         <Head>
-          {fonts.map((font) => (
+          {FONTS.map((font) => (
             <link
               key={font.href}
               rel={font.rel}
