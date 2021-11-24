@@ -22,10 +22,12 @@ const StyledInput = styled.input`
     color: rgb(0 0 0 / 25%);
   }
   &[disabled] {
+    opacity: 0.5;
     cursor: not-allowed;
     box-shadow: none;
     border: 0.01rem solid rgb(180 180 180 / 40%);
-    color: ${(props) => props.theme.color?.gray?.light};
+    color: ${(props) => props.theme.color.gray.dark};
+    background: ${(props) => props.theme.color.disabledGrayOpacity20};
  
     ::placeholder {
       color: rgb(0 0 0 / 15%);
