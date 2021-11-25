@@ -1,5 +1,6 @@
 import { Global, css } from '@emotion/react'
 import { fontFaces } from './fontFaces'
+import { fontFamilies } from './fontFamilies'
 
 export const globalStyles = (
   <Global
@@ -12,6 +13,7 @@ export const globalStyles = (
         font-size: 16px;
         background: white;
         min-height: 100vh;
+        font-family: ${fontFamilies.regular};
       }
     `}
   />

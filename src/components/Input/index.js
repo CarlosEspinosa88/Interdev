@@ -33,6 +33,12 @@ const StyledInput = styled.input`
       color: rgb(0 0 0 / 15%);
     }
   }
+
+  ${(props) => props.type === 'range' && `
+    cursor: pointer;
+    appearance: auto;
+    accent-color: ${props.theme.color.secondary};
+  `};
 `;
 
 const StyledError = styled.div`
@@ -55,23 +61,35 @@ export const StyledInputWrapper = styled.div`
     font-family: ${(props) => props.theme.font?.family?.regular};
     border: 0.1rem solid ${(props) => props.theme.color?.gray?.light};
     transition: all 150ms ease-out;
+    
     &:focus {
       border: 0.1rem solid ${(props) => props.theme.color?.primary};
     }
+    
     ${(props) => (props.hasError && `
-      border: 0.1rem solid red;
+      border: 0.1rem solid ${props.theme.color?.red};
     `)}
+
+    ${(props) => props.type === 'range' && `
+      padding: 0;
+      border: 0;
+      border-radius: 20rem;
+
+      &:focus {
+        border: 0 !important;
+      }
+    `};
   }
 
   ${StyledError} {
     position: absolute;
-    top: 50%;
-    right: 0.1rem;
+    top: 3.4rem;
+    right: -0.5rem;
     margin-left: 0.5rem;
     transform: translate3d(100%, -50%, 0);
     transition: all 200ms ease-out;
     font-family: ${(props) => props.theme.font?.family?.regular};
-    font-size: 1rem;
+    font-size: 0.8rem;
     line-height: 1rem;
     opacity: 0;
     pointer-events: none;
@@ -80,7 +98,7 @@ export const StyledInputWrapper = styled.div`
   ${(props) => (props.hasError && `
     ${StyledError} {
       opacity: 1;
-      color: red;
+      color: ${props.theme.color?.red};
       background: none;
       padding: 0.45rem 0.7rem;
       transform: translate3d(0%, -50%, 0);
@@ -116,7 +134,7 @@ function Input({
           <StyledLabel htmlFor={id}>{label}</StyledLabel>
         </StyledLabelWrapper>
       )}
-      <StyledInputWrapper hasError={hasError}>
+      <StyledInputWrapper hasError={hasError} type={type}>
         <StyledInput
           id={id}
           name={name}

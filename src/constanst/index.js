@@ -2,24 +2,64 @@ export const TYPE = {
   BUTTON: 'button',
   SUBMIT: 'submit',
   RESET: 'reset',
+  DATE: 'date',
+  RANGE: 'range',
 };
 
-const OPTIONS = [
+export const SENIORITY = [
+  {value: '', label: 'Seleccionar:'},
+  {value: 'junior', label: 'Junior'}, 
+  {value: 'medium', label: 'Medium'},
+  {value: 'master', label: 'Master'},
+]
+
+export const EXPERIENCE = [
+  {value: '', label: 'Seleccionar:'},
+  {value: 'one-year', label: '1 año'},
+  {value: 'two-years', label: '2 años'},
+  {value: 'three-years', label: '3 años'},
+  {value: 'four-years', label: '4 años'},
+  {value: 'five-years', label: '5 años'},
+]
+
+export const SALARY = [
+  {value: '', label: 'Seleccionar:'},
+  {value: 'one-million', label: '1 millon'},
+  {value: 'three-million', label: '3 millones'},
+  {value: 'six-million', label: '6 millones'},
+  {value: 'ten-million', label: '10 millones'},
+  {value: 'plus-ten-million', label: 'Más de 10 millones'}
+]
+
+export const ERROR_MESSAGES = {
+  EMPTY: 'Campo requerido',
+  EMAIL: 'Email valido',
+};
+
+export const FRAMEWORKS = [
   {
-    label: "Apple",
-    value: "apple",
+    label: "React",
+    value: "react",
   },
   {
-    label: "Mango",
-    value: "mango",
+    label: "Angular",
+    value: "angular",
   },
   {
-    label: "Banana",
-    value: "banana",
+    label: "Svelt",
+    value: "svelt",
   },
   {
-    label: "Pineapple",
-    value: "pineapple",
+    label: "NodeJS",
+    value: "node-js",
+  },
+  {
+    label: "Vue",
+    value: "vue",
+  },
+  {
+    label: "Vanilla JS",
+    value: "vanilla-js",
   },
 ];
 
