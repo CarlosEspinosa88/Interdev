@@ -8,25 +8,19 @@ export const theme = {
     white: '#FFFFFF',
     red: '#d93025',
     gray: {
+      clear: '#f0f0f0',
       light: '#B4B4B4',
       dark: '#373A36',
     },
     primaryGreenOpacity70: 'rgb(40 226 136 / 70%)',
     secondaryGreenOpacity90: 'rgb(0 90 90 / 90%)',
     disabledGrayOpacity20: 'rgb(0 0 0 / 20%)',
+    grayLightOpacity70: 'rgb(191 191 191 / 70%)'
   },
   font: {
     family: {
       bold: fontFamilies.bold,
       regular: fontFamilies.regular,
     },
-    // size: {
-    //   small: fontSizes.small,
-    //   medium: fontSizes.medium,
-    //   large: fontSizes.large,
-    // },
   },
-  // shadow: {
-  //   lightGrayOpacity10: boxShadows.lightGray,
-  // },
 };

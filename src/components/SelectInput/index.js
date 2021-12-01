@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { memo } from 'react'
 import styled from '@emotion/styled'
 import { css } from '@emotion/react'
 
 const StyledLabelWrapper = styled.div`
-  margin-bottom: 0.1gem;
+  margin-bottom: 0.1rem;
   `;
 
 const StyledLabel = styled.label`
@@ -36,13 +36,13 @@ const StyledSelectWrapper = styled.div`
 
   ${StyledError} {
     position: absolute;
-    top: 50%;
-    right: 1.5rem;
+    top: 3.4rem;
+    right: -0.5rem;
     margin-left: 0.5rem;
     transform: translate3d(100%, -50%, 0);
     transition: all 200ms ease-out;
     font-family: ${(props) => props.theme.font?.family?.regular};
-    font-size: 1rem;
+    font-size: 0.8rem;
     line-height: 1rem;
     opacity: 0;
     pointer-events: none;
@@ -51,7 +51,7 @@ const StyledSelectWrapper = styled.div`
   ${(props) => (props.hasError && `
     ${StyledError} {
       opacity: 1;
-      color: red;
+      color: ${props.theme.color?.red};
       background: none;
       padding: 0.45rem 0.7rem;
       transform: translate3d(0%, -50%, 0);
@@ -70,6 +70,7 @@ const StyledSelect = styled.select`
   outline: 0;
   box-shadow: none;
   width: 100%;
+  border-radius: 0.3rem;
   font-size: 1rem;
   cursor: pointer;
   padding: 0.6rem 1rem;
@@ -82,6 +83,10 @@ const StyledSelect = styled.select`
     outline: none;
     border: 0.1rem solid ${(props) => props.theme.color?.primary};
   }
+
+  ${(props) => (props.hasError && css`
+    border: 0.1rem solid ${props.theme.color?.red};
+  `)}
 
   ${(props) => props.disabled && css`
     opacity: 0.5;
@@ -98,7 +103,7 @@ function SelectInput({
   options,
   labelSelect,
   hasError,
-  errorMessages,
+  errorMessage,
   ...otherSelectProps
 }) {
 
@@ -120,6 +125,7 @@ function SelectInput({
           id={id}
           name={name}
           disabled={disabled}
+          hasError={hasError}
           {...otherSelectProps}
         >
           {options?.map((option) => (
@@ -128,7 +134,7 @@ function SelectInput({
         </StyledSelect>
         {hasError && (
           <StyledError>
-            {errorMessages}
+            {errorMessage}
           </StyledError>
         )}
       </StyledSelectWrapper>
@@ -147,4 +153,4 @@ SelectInput.defaultProps = {
   errorMessages: '',
 };
 
-export default SelectInput
+export default memo(SelectInput)

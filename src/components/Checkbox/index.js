@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import styled from '@emotion/styled'
 import { css } from '@emotion/react'
 
@@ -44,13 +45,13 @@ const Error = styled.span`
   font-size: .8rem;
   color: red;
   margin-left: 6px;
-  height: 2em;
+  height: 1em;
   display: flex;
   align-items: center;
   font-family: ${(props) => props.theme.font?.family?.regular};
   position: relative;
-  right: 140px;
-  top: 18px;
+  left: 50px;
+  bottom: 25px;
 `;
 
 const LabelText = styled.span``;
@@ -130,10 +131,11 @@ const CheckboxWrapper = styled.div`
 
 function Checkbox({
   id,
+  name,
   label,
   error,
   disabled,
-  hideLabel, 
+  hideLabel,
   ...restCheckboxProps 
 }) {
   const errorId = `${id}-error`;
@@ -144,6 +146,7 @@ function Checkbox({
         <Input
           id={id}
           type="checkbox"
+          name={name}
           disabled={disabled}
           aria-invalid={!!error}
           aria-describedby={errorId}
@@ -153,9 +156,11 @@ function Checkbox({
           <OptionalText hideLabel={hideLabel}>{label}</OptionalText>
         </LabelText>
       </Label>
-      <Error id={errorId} error={error}>
-        {error}
-      </Error>
+      {error && (
+        <Error id={errorId} error={error}>
+          {error}
+        </Error>
+      )}
     </CheckboxWrapper>
   );
 }
@@ -166,4 +171,4 @@ Checkbox.defaultProps = {
   disabled: false
 };
 
-export default Checkbox;
+export default memo(Checkbox);
