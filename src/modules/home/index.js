@@ -31,7 +31,9 @@ import {
   StyledInnerButtonContainer,
   StyledFaviconContainer,
   StyledContainerThanks,
-  StyledCentered
+  StyledCentered,
+  StyledContainerLabelCheckbox,
+  StyledLabelCheckbox
  } from './styles'
 
 const auth = getAuth();
@@ -291,6 +293,11 @@ export default function HomeForm() {
               </StyledSecondColumContainer>
             </StyledSelectsContainer>
             <div>
+              <StyledContainerLabelCheckbox>
+                <StyledLabelCheckbox>
+                  Frameworks Favoritos
+                </StyledLabelCheckbox>
+              </StyledContainerLabelCheckbox>
               <StyledCheckboxesContainer>
                 {FRAMEWORKS?.map((item, index) => (
                   <div key={item.value}>
