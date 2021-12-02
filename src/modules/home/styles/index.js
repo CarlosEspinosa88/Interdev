@@ -101,3 +101,12 @@ export const StyledContainerThanks = styled.div`
 export const StyledCentered = styled.div`
   text-align: center
 `
+export const StyledContainerLabelCheckbox = styled.div`
+  margin-bottom: 0.5em;
+`;
+
+export const StyledLabelCheckbox = styled.div`
+  font-size: 1rem;
+  color: ${(props) => props.theme.color?.gray?.dark};
+  font-family: ${(props) => props.theme.font?.family?.regular};
+`;

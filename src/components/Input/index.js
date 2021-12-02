@@ -5,7 +5,7 @@ const StyledLabelWrapper = styled.div`
   margin-bottom: 0.1em;
 `;
 
-export const StyledLabel = styled.label`
+const StyledLabel = styled.label`
   font-size: 1rem;
   color: ${(props) => props.theme.color?.gray?.dark};
   font-family: ${(props) => props.theme.font?.family?.regular};
@@ -33,12 +33,6 @@ const StyledInput = styled.input`
       color: rgb(0 0 0 / 15%);
     }
   }
-
-  ${(props) => props.type === 'range' && `
-    cursor: pointer;
-    appearance: auto;
-    accent-color: ${props.theme.color.secondary};
-  `};
 `;
 
 const StyledError = styled.div`
@@ -46,7 +40,7 @@ const StyledError = styled.div`
   right: 0;
 `;
 
-export const StyledInputWrapper = styled.div`
+const StyledInputWrapper = styled.div`
   display: inline-block;
   position: relative;
   vertical-align: top;
@@ -69,16 +63,6 @@ export const StyledInputWrapper = styled.div`
     ${(props) => (props.hasError && `
       border: 0.1rem solid ${props.theme.color?.red};
     `)}
-
-    ${(props) => props.type === 'range' && `
-      padding: 0;
-      border: 0;
-      border-radius: 20rem;
-
-      &:focus {
-        border: 0 !important;
-      }
-    `};
   }
 
   ${StyledError} {
