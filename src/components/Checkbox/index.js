@@ -49,10 +49,14 @@ const Error = styled.span`
   display: flex;
   align-items: center;
   font-family: ${(props) => props.theme.font?.family?.regular};
-  position: relative;
-  left: 50px;
-  bottom: 25px;
+  display: block;
+  position: absolute;
+  top: 68%;
+  left: 184px;
 `;
+    // position: relative;
+    // left: 50px;
+    // bottom: 25px;
 
 const LabelText = styled.span``;
 
@@ -134,6 +138,8 @@ function Checkbox({
   name,
   label,
   error,
+  // errorMessage,
+  // hasError,
   disabled,
   hideLabel,
   ...restCheckboxProps 
@@ -156,11 +162,11 @@ function Checkbox({
           <OptionalText hideLabel={hideLabel}>{label}</OptionalText>
         </LabelText>
       </Label>
-      {error && (
+      {/* {hasError && (
         <Error id={errorId} error={error}>
-          {error}
+          {errorMessage}
         </Error>
-      )}
+      )} */}
     </CheckboxWrapper>
   );
 }
@@ -168,6 +174,7 @@ function Checkbox({
 Checkbox.defaultProps = {
   hideLabel: false,
   error: null,
+  hasError: false,
   disabled: false
 };
 

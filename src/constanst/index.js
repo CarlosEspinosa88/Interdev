@@ -25,16 +25,17 @@ export const EXPERIENCE = [
 export const SALARY = [
   {value: '', label: 'Seleccionar:'},
   {value: 'one-million', label: '1 millon'},
-  {value: 'three-million', label: '3 millones'},
-  {value: 'six-million', label: '6 millones'},
-  {value: 'ten-million', label: '10 millones'},
-  {value: 'plus-ten-million', label: 'Más de 10 millones'}
+  {value: 'three-millions', label: '3 millones'},
+  {value: 'six-millions', label: '6 millones'},
+  {value: 'ten-millions', label: '10 millones'},
+  {value: 'plus-ten-millions', label: 'Más de 10 millones'}
 ]
 
 export const ERROR_MESSAGES = {
   EMPTY: 'Campo requerido',
-  EMAIL: 'Email valido',
-  DATE: 'Agrega una fecha a futuro'
+  EMAIL: 'Email invalido',
+  DATE: 'Agrega una fecha a futuro',
+  CHECBOXES: 'Selecciona al menos un framework'
 };
 
 export const FRAMEWORKS = [
@@ -47,8 +48,8 @@ export const FRAMEWORKS = [
     value: "angular",
   },
   {
-    label: "Svelt",
-    value: "svelt",
+    label: "Svelte",
+    value: "svelte",
   },
   {
     label: "NodeJS",

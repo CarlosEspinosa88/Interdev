@@ -102,11 +102,20 @@ export const StyledCentered = styled.div`
   text-align: center
 `
 export const StyledContainerLabelCheckbox = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
   margin-bottom: 0.5em;
 `;
 
 export const StyledLabelCheckbox = styled.div`
   font-size: 1rem;
   color: ${(props) => props.theme.color?.gray?.dark};
+  font-family: ${(props) => props.theme.font?.family?.regular};
+`;
+
+export const StyledErrorLabelCheckbox = styled.div`
+  font-size: 0.8rem;
+  color: ${(props) => props.theme.color?.red};
   font-family: ${(props) => props.theme.font?.family?.regular};
 `;
