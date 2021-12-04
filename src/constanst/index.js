@@ -34,6 +34,7 @@ export const SALARY = [
 export const ERROR_MESSAGES = {
   EMPTY: 'Campo requerido',
   EMAIL: 'Email valido',
+  DATE: 'Agrega una fecha a futuro'
 };
 
 export const FRAMEWORKS = [

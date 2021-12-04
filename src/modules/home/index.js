@@ -1,3 +1,4 @@
+import * as dayjs from 'dayjs'
 import Image from 'next/image'
 import { useState, useEffect } from "react"
 import styled from '@emotion/styled'
@@ -37,6 +38,7 @@ import {
  } from './styles'
 
 const auth = getAuth();
+const todayDate = dayjs().format('YYYY-MM-DD');
 
 export default function HomeForm() {
   const [userData, setUserData] = useState(null)
@@ -48,9 +50,17 @@ export default function HomeForm() {
     isDisabled: false,
   })
   
-  const [checked, setChecked] = useState(
+  const [stateChecked, setStateChecked] = useState(
     new Array(FRAMEWORKS.length).fill(false)
   )
+
+  const [typeError, setTypeError] = useState({
+    name: '',
+    seniority: '',
+    experience: '',
+    salary: '',
+    date: '',
+  })
   
   const [hasError, setHasError] = useState({
     name: false,
@@ -76,16 +86,57 @@ export default function HomeForm() {
   }
 
   function handleOnBlur(event) {
+    /// Validate fields with empty values
     if (event.target.value === '') {
       setHasError((prevState) => ({
         ...prevState,
         [event.target.name]: true
       }))
+
+      setTypeError((prevState) => ({
+        ...prevState,
+        [event.target.name]: ERROR_MESSAGES.EMPTY
+      }))
+
     } else if (event.target.value !== '') {
+      
       setHasError((prevState) => ({
         ...prevState,
         [event.target.name]: false
       }))
+
+      setTypeError((prevState) => ({
+        ...prevState,
+        [event.target.name]: ''
+      }))
+    }
+
+    /// Validate calendar with pass dates
+    if (event.target.name === 'date' &&
+      event.target.value !== '' && event.target.value < todayDate) {
+      
+      setHasError((prevState) => ({
+        ...prevState,
+        [event.target.name]: true
+      }))
+
+      setTypeError((prevState) => ({
+        ...prevState,
+        [event.target.name]: ERROR_MESSAGES.DATE
+      }))
+    } else if (event.target.name === 'date' &&
+      (event.target.value !== '' || event.target.value > todayDate)) {
+      
+      setHasError((prevState) => ({
+        ...prevState,
+        [event.target.name]: false
+      }))
+
+      setTypeError((prevState) => ({
+        ...prevState,
+        [event.target.name]: ''
+      }))
+
     }
   }
 
@@ -105,28 +156,29 @@ export default function HomeForm() {
       removeItemFromCheckboxArr(valueAllCheckbox, name.label);
     }
 
-    const updatedCheckedState = checked.map((item, index) => {
+    const updatedCheckedState = stateChecked.map((item, index) => {
       return index === position ? !item : item
     });
     
-    setChecked(updatedCheckedState);
+    setStateChecked(updatedCheckedState);
   }
 
   useEffect(() => {
-    const { name, seniority, experience, salary, date } = values
+    const includeErrors = Object.values(hasError).includes(true)
+    const includeEmptyValues = Object.values(values).includes('')
 
-    if (name && seniority && experience && salary && date) {
+    if (!includeEmptyValues && !includeErrors) {
       setStateButton((prevState) => ({
         ...prevState,
         isDisabled: false,
       }))
-    } else if (!name || !seniority || !experience || !salary || !date ) {
+    } else if (includeEmptyValues || includeErrors ) {
       setStateButton((prevState) => ({
         ...prevState,
         isDisabled: true,
       }))
     }
-  }, [values])
+  }, [values, hasError])
 
   
   const handleRedirectToGithub = () => {
@@ -183,6 +235,7 @@ export default function HomeForm() {
         seniority: values.seniority,
         experience: values.experience,
         salary: values.salary,
+        entranceDateToWork: values.date,
         framework: valueAllCheckbox
       })
     }, 2000)
@@ -226,7 +279,7 @@ export default function HomeForm() {
                 label='Nombre y apellido*'
                 value={values.name}
                 hasError={hasError.name}
-                errorMessage={ERROR_MESSAGES.EMPTY}
+                errorMessage={typeError.name}
                 onChange={handleValue}
                 onBlur={handleOnBlur}
               />
@@ -240,7 +293,7 @@ export default function HomeForm() {
                   labelSelect='Seniority*'
                   value={values.seniority}
                   hasError={hasError.seniority}
-                  errorMessage={ERROR_MESSAGES.EMPTY}
+                  errorMessage={typeError.seniority}
                   options={SENIORITY}
                   onChange={handleValue}
                   onBlur={handleOnBlur}
@@ -254,7 +307,7 @@ export default function HomeForm() {
                   labelSelect='Años de experiencia*'
                   value={values.experience}
                   hasError={hasError.experience}
-                  errorMessage={ERROR_MESSAGES.EMPTY}
+                  errorMessage={typeError.experience}
                   options={EXPERIENCE}
                   onChange={handleValue}
                   onBlur={handleOnBlur}
@@ -270,7 +323,7 @@ export default function HomeForm() {
                   labelSelect='Aspiración salarial*'
                   value={values.salary}
                   hasError={hasError.salary}
-                  errorMessage={ERROR_MESSAGES.EMPTY}
+                  errorMessage={typeError.salary}
                   options={SALARY}
                   onChange={handleValue}
                   onBlur={handleOnBlur}
@@ -285,7 +338,7 @@ export default function HomeForm() {
                   label='Fecha de ingreso*'
                   value={values.date}
                   hasError={hasError.date}
-                  errorMessage={ERROR_MESSAGES.EMPTY}
+                  errorMessage={typeError.date}
                   onChange={handleValue}
                   onBlur={handleOnBlur}
                 />
@@ -305,7 +358,7 @@ export default function HomeForm() {
                       id={`${item.value}-${index}`}
                       label={item.label}
                       onChange={() => handleCheckboxes(item, index)}
-                      checked={checked[index]}
+                      checked={stateChecked[index]}
                     />
                   </div>
                 ))}
