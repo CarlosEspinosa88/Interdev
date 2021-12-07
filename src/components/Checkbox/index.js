@@ -138,8 +138,6 @@ function Checkbox({
   name,
   label,
   error,
-  // errorMessage,
-  // hasError,
   disabled,
   hideLabel,
   ...restCheckboxProps 
@@ -162,11 +160,6 @@ function Checkbox({
           <OptionalText hideLabel={hideLabel}>{label}</OptionalText>
         </LabelText>
       </Label>
-      {/* {hasError && (
-        <Error id={errorId} error={error}>
-          {errorMessage}
-        </Error>
-      )} */}
     </CheckboxWrapper>
   );
 }

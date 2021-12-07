@@ -1,11 +1,13 @@
 import * as dayjs from 'dayjs'
-import Image from 'next/image'
 import { useState, useEffect } from "react"
+
+import Image from 'next/image'
 import styled from '@emotion/styled'
 import { css } from '@emotion/react'
-import { getAuth, GithubAuthProvider, signOut } from "firebase/auth"
-import { loginWithGithub } from '../../firebase/client'
-import logo from '../../../public/githubo.png';
+import { logoutGithubAuth } from '../../firebase/logout'
+import { redirectToGithub } from '../../firebase/longin'
+import { sendDataToFirebase } from '../../firebase/sendData'
+import logo from '../../../public/githubo.png'
 import Button from '../../components/Button'
 import Input from '../../components/Input'
 import SelectInput from '../../components/SelectInput'
@@ -38,19 +40,19 @@ import {
   StyledErrorLabelCheckbox
  } from './styles'
 
-const auth = getAuth();
 const todayDate = dayjs().format('YYYY-MM-DD');
 
-export default function HomeForm() {
+function HomeForm() {
   const [userData, setUserData] = useState(null)
   const [isSendedData, setIsSendedData] = useState(false)
   const [valueAllCheckbox, setValueAllCheckbox] = useState([])
-  
+  console.log(valueAllCheckbox)
+
   const [stateButton, setStateButton] = useState({
     isLoading: false,
     isDisabled: false,
   })
-  
+
   const [stateChecked, setStateChecked] = useState(
     new Array(FRAMEWORKS.length).fill(false)
   )
@@ -63,7 +65,7 @@ export default function HomeForm() {
     date: '',
     checkbox: '',
   })
-  
+
   const [hasError, setHasError] = useState({
     name: false,
     seniority: false,
@@ -81,7 +83,6 @@ export default function HomeForm() {
     date: '',
   })
 
-  
   function handleValue(event) {
     setValues((prevState) => ({
       ...prevState,
@@ -102,7 +103,7 @@ export default function HomeForm() {
       }))
 
     } else if (event.target.value !== '') {
-      
+
       setHasError((prevState) => ({
         ...prevState,
         [event.target.name]: false
@@ -117,7 +118,7 @@ export default function HomeForm() {
 
   function handleOnBlurCalendar(event) {
     if (event.target.value !== '' && event.target.value < todayDate) {
-      
+
       setHasError((prevState) => ({
         ...prevState,
         [event.target.name]: true
@@ -128,7 +129,7 @@ export default function HomeForm() {
         [event.target.name]: ERROR_MESSAGES.DATE
       }))
     } else if (event.target.value !== '' || event.target.value > todayDate) {
-      
+
       setHasError((prevState) => ({
         ...prevState,
         [event.target.name]: false
@@ -145,6 +146,7 @@ export default function HomeForm() {
     const includesAnyCheckboxsInTrue = stateChecked.includes(true)
 
     if (event.target.value === 'false' && !includesAnyCheckboxsInTrue) {
+
       setHasError((prevState) => ({
         ...prevState,
         [event.target.name]: true
@@ -155,6 +157,7 @@ export default function HomeForm() {
         [event.target.name]: ERROR_MESSAGES.CHECBOXES
       }))
     } else if (event.target.value === 'true' || includesAnyCheckboxsInTrue) {
+
       setHasError((prevState) => ({
         ...prevState,
         [event.target.name]: false
@@ -167,7 +170,7 @@ export default function HomeForm() {
     }
   }
 
-  function handleCheckboxes(name, position) {
+  function handleCheckboxesValue(name, position) {
     const includes = valueAllCheckbox.includes(name.label)
 
     if (!includes) {
@@ -186,8 +189,39 @@ export default function HomeForm() {
     const updatedCheckedState = stateChecked.map((item, index) => {
       return index === position ? !item : item
     });
-    
+
     setStateChecked(updatedCheckedState);
+  }
+
+  function handleLoginToInit() {
+    redirectToGithub(setUserData);
+  }
+
+  function handleSubmitForm(event) {
+    event.preventDefault();
+
+    setStateButton((prevState) => ({
+      ...prevState,
+      isLoading: true,
+    }))
+
+    sendDataToFirebase({
+      gitHub: `github.com/${githubClient}`,
+      name: values.name,
+      seniority: values.seniority,
+      experience: values.experience,
+      salary: values.salary,
+      entranceDateToWork: values.date,
+      framework: valueAllCheckbox
+    })
+
+    setTimeout(() => {
+      logoutGithubAuth(setUserData, setIsSendedData);
+      setStateButton((prevState) => ({
+        ...prevState,
+        isLoading: false,
+      }))
+    }, 2000)
   }
 
   useEffect(() => {
@@ -207,67 +241,6 @@ export default function HomeForm() {
       }))
     }
   }, [values, hasError, valueAllCheckbox])
-
-  
-  const handleRedirectToGithub = () => {
-    loginWithGithub()
-      .then((result) => {
-        const credential = GithubAuthProvider.credentialFromResult(result);
-         if(credential) {
-           const token = credential.accessToken;
-           const user = result.user;
-           
-           setUserData(user)
-           console.log('AuthUserToken', token)           
-           console.log('AuthUser', user)
-         }
-      }).catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        const email = error.email;
-        const credential = GithubAuthProvider.credentialFromError(error);
-        
-        console.log('AuthError', error)
-        console.log('AuthErrorMessages', errorMessage)
-      });
-  }
-
-  const logoutGithubAuth = () => {
-    signOut(auth).then(() => {
-      setUserData(null)
-      setIsSendedData(true)
-    }).catch((error) => {
-      const errorMessage = error.message;
-      console.log('LogoutError', errorMessage)
-    });
-  }
-
-  function handleSubmitForm(event) {
-    event.preventDefault();
-
-    setStateButton((prevState) => ({
-      ...prevState,
-      isLoading: true,
-    }))
-
-    setTimeout(() => {
-      logoutGithubAuth();
-      setStateButton((prevState) => ({
-        ...prevState,
-        isLoading: false,
-      }))
-
-      console.log('SEND_DATA', {
-        gitHub: `github.com/${githubClient}`,
-        name: values.name, 
-        seniority: values.seniority,
-        experience: values.experience,
-        salary: values.salary,
-        entranceDateToWork: values.date,
-        framework: valueAllCheckbox
-      })
-    }, 2000)
-  }
 
   const githubClient = userData?.auth?.currentUser?.reloadUserInfo?.screenName
 
@@ -293,7 +266,7 @@ export default function HomeForm() {
                   required
                   name='github'
                   id='id-github-url'
-                  label='Github Url'
+                  label='Github url'
                   value={`github.com/${githubClient}`}
                 />
               </StyledSecondColumnAvatar>
@@ -344,7 +317,7 @@ export default function HomeForm() {
             </StyledSelectsContainer>
             <StyledSelectsContainer>
               <StyledFirstColumnContainer>
-                <SelectInput 
+                <SelectInput
                   required
                   id='id-salary'
                   name='salary'
@@ -370,13 +343,12 @@ export default function HomeForm() {
                   onChange={handleValue}
                   onBlur={handleOnBlurCalendar}
                 />
-
               </StyledSecondColumContainer>
             </StyledSelectsContainer>
             <div>
               <StyledContainerLabelCheckbox>
                 <StyledLabelCheckbox>
-                  Frameworks Favoritos*
+                  Frameworks favoritos*
                 </StyledLabelCheckbox>
                 {hasError.checkbox && (
                   <StyledErrorLabelCheckbox>
@@ -393,10 +365,7 @@ export default function HomeForm() {
                       label={item.label}
                       value={stateChecked[index]}
                       checked={stateChecked[index]}
-                      onChange={() => {
-                        handleValue
-                        handleCheckboxes(item, index)
-                      }}
+                      onChange={() => handleCheckboxesValue(item, index)}
                       onBlur={handleOnBlurCheckbox}
                     />
                   </div>
@@ -426,7 +395,7 @@ export default function HomeForm() {
               </StyledCentered>
             </StyledContainerThanks>
           ) : (
-            <Button onClick={handleRedirectToGithub}>
+            <Button onClick={handleLoginToInit}>
               <StyledInnerButtonContainer>
                 <StyledFaviconContainer>
                   <Image width="30" height="30" src={logo} alt="ico-github"/>
@@ -440,3 +409,5 @@ export default function HomeForm() {
     </>
   )
 }
+
+export default HomeForm
