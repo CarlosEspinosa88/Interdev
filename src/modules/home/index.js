@@ -34,7 +34,8 @@ import {
   StyledContainerThanks,
   StyledCentered,
   StyledContainerLabelCheckbox,
-  StyledLabelCheckbox
+  StyledLabelCheckbox,
+  StyledErrorLabelCheckbox
  } from './styles'
 
 const auth = getAuth();
@@ -60,6 +61,7 @@ export default function HomeForm() {
     experience: '',
     salary: '',
     date: '',
+    checkbox: '',
   })
   
   const [hasError, setHasError] = useState({
@@ -68,6 +70,7 @@ export default function HomeForm() {
     experience: false,
     salary: false,
     date: false,
+    checkbox: false,
   })
 
   const [values, setValues] = useState({
@@ -78,6 +81,7 @@ export default function HomeForm() {
     date: '',
   })
 
+  
   function handleValue(event) {
     setValues((prevState) => ({
       ...prevState,
@@ -85,8 +89,7 @@ export default function HomeForm() {
     }))
   }
 
-  function handleOnBlur(event) {
-    /// Validate fields with empty values
+  function handleOnBlurInput(event) {
     if (event.target.value === '') {
       setHasError((prevState) => ({
         ...prevState,
@@ -110,10 +113,10 @@ export default function HomeForm() {
         [event.target.name]: ''
       }))
     }
+  }
 
-    /// Validate calendar with pass dates
-    if (event.target.name === 'date' &&
-      event.target.value !== '' && event.target.value < todayDate) {
+  function handleOnBlurCalendar(event) {
+    if (event.target.value !== '' && event.target.value < todayDate) {
       
       setHasError((prevState) => ({
         ...prevState,
@@ -124,8 +127,7 @@ export default function HomeForm() {
         ...prevState,
         [event.target.name]: ERROR_MESSAGES.DATE
       }))
-    } else if (event.target.name === 'date' &&
-      (event.target.value !== '' || event.target.value > todayDate)) {
+    } else if (event.target.value !== '' || event.target.value > todayDate) {
       
       setHasError((prevState) => ({
         ...prevState,
@@ -136,7 +138,32 @@ export default function HomeForm() {
         ...prevState,
         [event.target.name]: ''
       }))
+    }
+  }
 
+  function handleOnBlurCheckbox(event, index) {
+    const includesAnyCheckboxsInTrue = stateChecked.includes(true)
+
+    if (event.target.value === 'false' && !includesAnyCheckboxsInTrue) {
+      setHasError((prevState) => ({
+        ...prevState,
+        [event.target.name]: true
+      }))
+
+      setTypeError((prevState) => ({
+        ...prevState,
+        [event.target.name]: ERROR_MESSAGES.CHECBOXES
+      }))
+    } else if (event.target.value === 'true' || includesAnyCheckboxsInTrue) {
+      setHasError((prevState) => ({
+        ...prevState,
+        [event.target.name]: false
+      }))
+
+      setTypeError((prevState) => ({
+        ...prevState,
+        [event.target.name]: ''
+      }))
     }
   }
 
@@ -166,19 +193,20 @@ export default function HomeForm() {
   useEffect(() => {
     const includeErrors = Object.values(hasError).includes(true)
     const includeEmptyValues = Object.values(values).includes('')
+    const includeChecboxesValues = valueAllCheckbox.length === 0
 
-    if (!includeEmptyValues && !includeErrors) {
+    if (!includeEmptyValues && !includeErrors && !includeChecboxesValues) {
       setStateButton((prevState) => ({
         ...prevState,
         isDisabled: false,
       }))
-    } else if (includeEmptyValues || includeErrors ) {
+    } else if (includeEmptyValues || includeErrors || includeChecboxesValues) {
       setStateButton((prevState) => ({
         ...prevState,
         isDisabled: true,
       }))
     }
-  }, [values, hasError])
+  }, [values, hasError, valueAllCheckbox])
 
   
   const handleRedirectToGithub = () => {
@@ -281,7 +309,7 @@ export default function HomeForm() {
                 hasError={hasError.name}
                 errorMessage={typeError.name}
                 onChange={handleValue}
-                onBlur={handleOnBlur}
+                onBlur={handleOnBlurInput}
               />
             </div>
             <StyledSelectsContainer>
@@ -296,7 +324,7 @@ export default function HomeForm() {
                   errorMessage={typeError.seniority}
                   options={SENIORITY}
                   onChange={handleValue}
-                  onBlur={handleOnBlur}
+                  onBlur={handleOnBlurInput}
                 />
               </StyledFirstColumnContainer>
               <StyledSecondColumContainer>
@@ -310,7 +338,7 @@ export default function HomeForm() {
                   errorMessage={typeError.experience}
                   options={EXPERIENCE}
                   onChange={handleValue}
-                  onBlur={handleOnBlur}
+                  onBlur={handleOnBlurInput}
                 />
               </StyledSecondColumContainer>
             </StyledSelectsContainer>
@@ -326,7 +354,7 @@ export default function HomeForm() {
                   errorMessage={typeError.salary}
                   options={SALARY}
                   onChange={handleValue}
-                  onBlur={handleOnBlur}
+                  onBlur={handleOnBlurInput}
                 />
               </StyledFirstColumnContainer>
               <StyledSecondColumContainer>
@@ -340,7 +368,7 @@ export default function HomeForm() {
                   hasError={hasError.date}
                   errorMessage={typeError.date}
                   onChange={handleValue}
-                  onBlur={handleOnBlur}
+                  onBlur={handleOnBlurCalendar}
                 />
 
               </StyledSecondColumContainer>
@@ -348,17 +376,28 @@ export default function HomeForm() {
             <div>
               <StyledContainerLabelCheckbox>
                 <StyledLabelCheckbox>
-                  Frameworks Favoritos
+                  Frameworks Favoritos*
                 </StyledLabelCheckbox>
+                {hasError.checkbox && (
+                  <StyledErrorLabelCheckbox>
+                    {typeError.checkbox}
+                  </StyledErrorLabelCheckbox>
+                )}
               </StyledContainerLabelCheckbox>
               <StyledCheckboxesContainer>
                 {FRAMEWORKS?.map((item, index) => (
                   <div key={item.value}>
                     <Checkbox
                       id={`${item.value}-${index}`}
+                      name='checkbox'
                       label={item.label}
-                      onChange={() => handleCheckboxes(item, index)}
+                      value={stateChecked[index]}
                       checked={stateChecked[index]}
+                      onChange={() => {
+                        handleValue
+                        handleCheckboxes(item, index)
+                      }}
+                      onBlur={handleOnBlurCheckbox}
                     />
                   </div>
                 ))}
