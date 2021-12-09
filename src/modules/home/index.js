@@ -5,13 +5,13 @@ import Image from 'next/image'
 import styled from '@emotion/styled'
 import { css } from '@emotion/react'
 import { logoutGithubAuth } from '../../firebase/logout'
-import { redirectToGithub } from '../../firebase/longin'
+import { redirectToGithub } from '../../firebase/login'
 import { sendDataToFirebase } from '../../firebase/sendData'
 import logo from '../../../public/githubo.png'
 import Button from '../../components/Button'
 import Input from '../../components/Input'
-import SelectInput from '../../components/SelectInput'
 import Checkbox from '../../components/Checkbox'
+import SelectInput from '../../components/SelectInput'
 import {
   SENIORITY,
   EXPERIENCE,
@@ -46,7 +46,6 @@ function HomeForm() {
   const [userData, setUserData] = useState(null)
   const [isSendedData, setIsSendedData] = useState(false)
   const [valueAllCheckbox, setValueAllCheckbox] = useState([])
-  console.log(valueAllCheckbox)
 
   const [stateButton, setStateButton] = useState({
     isLoading: false,
@@ -176,21 +175,21 @@ function HomeForm() {
     if (!includes) {
       setValueAllCheckbox(prevState =>
         [...prevState, name.label]
-      );
+      )
     } else {
       function removeItemFromCheckboxArr(arr, item) {
-        let index = arr.indexOf( item );
+        let index = arr.indexOf( item )
         index !== -1 && arr.splice(index, 1)
       }
 
-      removeItemFromCheckboxArr(valueAllCheckbox, name.label);
+      removeItemFromCheckboxArr(valueAllCheckbox, name.label)
     }
 
     const updatedCheckedState = stateChecked.map((item, index) => {
       return index === position ? !item : item
     });
 
-    setStateChecked(updatedCheckedState);
+    setStateChecked(updatedCheckedState)
   }
 
   function handleLoginToInit() {
@@ -198,7 +197,7 @@ function HomeForm() {
   }
 
   function handleSubmitForm(event) {
-    event.preventDefault();
+    event.preventDefault()
 
     setStateButton((prevState) => ({
       ...prevState,
@@ -216,7 +215,7 @@ function HomeForm() {
     })
 
     setTimeout(() => {
-      logoutGithubAuth(setUserData, setIsSendedData);
+      logoutGithubAuth(setUserData, setIsSendedData)
       setStateButton((prevState) => ({
         ...prevState,
         isLoading: false,

@@ -12,11 +12,11 @@ const firebaseConfig = {
   measurementId: "G-JJXQHBKF5N"
 };
 
-initializeApp(firebaseConfig);
+initializeApp(firebaseConfig)
 
-export const auth = getAuth();
-export const db = getFirestore();
+export const auth = getAuth()
+export const db = getFirestore()
 export const loginWithGithub = () => {
-  const provider = new GithubAuthProvider();
-  return signInWithPopup(auth, provider);
+  const provider = new GithubAuthProvider()
+  return signInWithPopup(auth, provider)
 }

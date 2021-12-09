@@ -108,7 +108,7 @@ function SelectInput({
 }) {
 
   function Option({ label, value }) {
-    return <option value={value}>{label}</option>;
+    return <option value={value}>{label}</option>
   }
 
   return (

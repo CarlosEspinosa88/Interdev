@@ -1,4 +1,4 @@
-import { css } from '@emotion/react';
+import { css } from '@emotion/react'
 
 export const fontFaces = css`
   @font-face {
@@ -18,4 +18,4 @@ export const fontFaces = css`
     src: url('/fonts/bold/dm-sans.woff2') format('woff2'),
       url('/fonts/bold/dm-sans.woff') format('woff');
   }
-`;
+`
