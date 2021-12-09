@@ -19,8 +19,8 @@ export async function sendDataToFirebase({
       salary,
       entranceDateToWork,
       framework
-    });
+    })
   } catch (e) {
-    console.error("Error adding document: ", e);
+    console.error("Error adding document: ", e)
   }
 }

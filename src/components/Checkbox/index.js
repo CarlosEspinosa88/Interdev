@@ -142,7 +142,7 @@ function Checkbox({
   hideLabel,
   ...restCheckboxProps 
 }) {
-  const errorId = `${id}-error`;
+  const errorId = `${id}-error`
 
   return (
     <CheckboxWrapper>

@@ -1,7 +1,7 @@
 import Document, {
   Html, Head, Main, NextScript,
-} from 'next/document';
-import { FONTS } from '../constanst';
+} from 'next/document'
+import { FONTS } from '../constanst'
 
 class AppDocument extends Document {
   render() {

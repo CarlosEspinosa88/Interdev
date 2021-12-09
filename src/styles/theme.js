@@ -23,4 +23,4 @@ export const theme = {
       regular: fontFamilies.regular,
     },
   },
-};
+}

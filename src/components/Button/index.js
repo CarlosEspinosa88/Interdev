@@ -60,7 +60,7 @@ function Button({
   ...restButtonProps 
 }) {  
   
-  const content = loading ? 'Cargando' : children;
+  const content = loading ? 'Cargando' : children
 
   return (
     <ButtonStyled
