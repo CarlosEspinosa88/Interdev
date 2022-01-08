@@ -1,4 +1,4 @@
-import React, { memo } from 'react'
+import React, { memo, forwardRef, useState, useImperativeHandle } from 'react'
 import styled from '@emotion/styled'
 import { css } from '@emotion/react'
 
@@ -6,7 +6,7 @@ const StyledLabelWrapper = styled.div`
   margin-bottom: 0.1rem;
   `;
 
-const StyledLabel = styled.label`
+const StyledLabel = styled.label`s
   font-size: 1rem;
   color: ${(props) => props.theme.color?.gray?.dark};
   font-family: ${(props) => props.theme.font?.family?.regular};
@@ -96,61 +96,90 @@ const StyledSelect = styled.select`
   `}
 `
 
-function SelectInput({
-  id,
-  name,
-  disabled,
-  options,
-  labelSelect,
-  hasError,
-  errorMessage,
-  ...otherSelectProps
-}) {
+const SelectInput = forwardRef(
+  function SelectInputRef({
+    id,
+    name,
+    disabled,
+    options,
+    Label,
+    hasError,
+    errorMessage,
+    ...otherSelectProps
+  }, ref) {
 
-  function Option({ label, value }) {
-    return <option value={value}>{label}</option>
-  }
+    const [value, setValue] = useState({
+      seniority: '',
+      salary: '',
+    })
 
-  return (
-    <>
-      {labelSelect && (
-        <StyledLabelWrapper>
-          <StyledLabel htmlFor={id}>
-          {labelSelect}
-          </StyledLabel>
-        </StyledLabelWrapper>
-      )}
-      <StyledSelectWrapper hasError={hasError}>
-        <StyledSelect
-          id={id}
-          name={name}
-          disabled={disabled}
-          hasError={hasError}
-          {...otherSelectProps}
-        >
-          {options?.map((option) => (
-            <Option {...option} key={option.value} />
-          ))}
-        </StyledSelect>
-        {hasError && (
-          <StyledError>
-            {errorMessage}
-          </StyledError>
+    useImperativeHandle(ref, () => ({
+      onChangeValueByRef(event) {
+        setValue((prevState) => ({
+          ...prevState,
+          [event?.target?.name]: event?.target?.value
+        }))
+      },
+      setValueByRef(key) {
+        return value.[key]
+      },
+      initialValueByRef(key) {
+        setValue((prevState) => ({
+          ...prevState,
+          [key]: ''
+        }))
+      },
+    }))
+
+    function Option({ label, value }) {
+      return <option value={value}>{label}</option>
+    }
+
+    return (
+      <>
+        {Label && (
+          <StyledLabelWrapper>
+            <StyledLabel htmlFor={id}>
+            {Label}
+            </StyledLabel>
+          </StyledLabelWrapper>
         )}
-      </StyledSelectWrapper>
-    </>
-  );
-}
+        <StyledSelectWrapper hasError={hasError}>
+          <StyledSelect
+            ref={ref} 
+            id={id}
+            name={name}
+            value={value?.[name]}
+            disabled={disabled}
+            hasError={hasError}
+            {...otherSelectProps}
+          >
+            {options?.map((option) => (
+              <Option {...option} key={option.value} />
+            ))}
+          </StyledSelect>
+          {hasError && (
+            <StyledError>
+              {errorMessage}
+            </StyledError>
+          )}
+        </StyledSelectWrapper>
+      </>
+    );
+  }
+)
+
+SelectInput.displayName = 'Input'
 
 SelectInput.defaultProps = {
-  id: 'Select',
-  name: 'Name',
+  id: 'select-id',
+  name: 'select',
   labelSelect: 'Selecciona una Opción',
   disabled: false,
   options: [],
   onChange: () => null,
   hasError: false,
-  errorMessages: '',
+  errorMessage: '',
 };
 
 export default memo(SelectInput)

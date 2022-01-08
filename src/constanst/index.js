@@ -1,3 +1,7 @@
+import * as dayjs from 'dayjs'
+
+export const CURRENT_DATE = dayjs().format('YYYY-MM-DD');
+
 export const TYPE = {
   BUTTON: 'button',
   SUBMIT: 'submit',
