@@ -1,4 +1,4 @@
-import { memo } from 'react'
+import { memo, forwardRef, useState, useImperativeHandle } from 'react'
 import styled from '@emotion/styled'
 
 const StyledLabelWrapper = styled.div`
@@ -96,63 +96,94 @@ const StyledInputWrapper = styled.div`
   `)}
 `;
 
-function Input({
-  id,
-  type,
-  name,
-  value,
-  label,
-  limit,
-  onChange,
-  required,
-  disabled,
-  hasError,
-  placeholder,
-  errorMessage,
-  ...restInputProps
-}) {
-  return (
-    <>
-      {label && (
-        <StyledLabelWrapper>
-          <StyledLabel htmlFor={id}>{label}</StyledLabel>
-        </StyledLabelWrapper>
-      )}
-      <StyledInputWrapper hasError={hasError} type={type}>
-        <StyledInput
-          id={id}
-          name={name}
-          type={type}
-          value={value}
-          maxLength={limit}
-          onChange={onChange}
-          required={required}
-          disabled={disabled}
-          placeholder={placeholder}
-          {...restInputProps}
-        />
-        {hasError && (
-          <StyledError>
-            {errorMessage}
-          </StyledError>
+const Input = forwardRef(
+  function InputRef({
+    id,
+    type,
+    name,
+    value,
+    label,
+    limit,
+    onChange,
+    required,
+    disabled,
+    hasError,
+    placeholder,
+    errorMessage,
+    ...restInputProps
+  }, ref) {
+
+    const [inputValue, setInputValue] = useState({
+      name: '',
+      lastName: '',
+      date: ''
+    })
+
+    useImperativeHandle(ref, () => ({
+      onChangeValueByRef(event) {
+        console.log('INPUT', event?.target?.value)
+        setInputValue((prevState) => ({
+          ...prevState,
+          [event?.target?.name]: event?.target?.value
+        }))
+      },
+      setValueByRef(key) {
+        return inputValue.[key]
+      },
+      initialValueByRef(key) {
+        setInputValue((prevState) => ({
+          ...prevState,
+          [key]: ''
+        }))
+      },
+    }))
+
+    return (
+      <>
+        {label && (
+          <StyledLabelWrapper>
+            <StyledLabel htmlFor={id}>{label}</StyledLabel>
+          </StyledLabelWrapper>
         )}
-      </StyledInputWrapper>
-    </>
-  )
-}
+        <StyledInputWrapper hasError={hasError} type={type}>
+          <StyledInput
+            id={id}
+            ref={ref}
+            name={name}
+            type={type}
+            value={inputValue?.[name]}
+            maxLength={limit}
+            onChange={onChange}
+            required={required}
+            disabled={disabled}
+            placeholder={placeholder}
+            {...restInputProps}
+          />
+          {hasError && (
+            <StyledError>
+              {errorMessage}
+            </StyledError>
+          )}
+        </StyledInputWrapper>
+      </>
+    )
+  }
+)
+
+Input.displayName = 'Input'
 
 Input.defaultProps = {
   id: '',
   type: 'text',
   name: '',
   label: '',
-  limit: 80,
+  limit: 20,
   onChange: () => null,
   placeholder: '',
   disabled: false,
   required: false,
   hasError: false,
-  errorMessages: '',
+  errorMessage: '',
 };
 
 export default memo(Input)
