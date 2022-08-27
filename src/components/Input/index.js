@@ -121,7 +121,6 @@ const Input = forwardRef(
 
     useImperativeHandle(ref, () => ({
       onChangeValueByRef(event) {
-        console.log('INPUT', event?.target?.value)
         setInputValue((prevState) => ({
           ...prevState,
           [event?.target?.name]: event?.target?.value

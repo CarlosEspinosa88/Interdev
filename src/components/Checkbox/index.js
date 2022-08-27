@@ -1,6 +1,7 @@
-import { memo } from 'react'
+import { memo, useImperativeHandle, forwardRef, useState } from 'react'
 import styled from '@emotion/styled'
 import { css } from '@emotion/react'
+import { FRAMEWORKS } from '../../constanst/index'
 
 const Label = styled.label`
   cursor: pointer;
@@ -54,9 +55,6 @@ const Error = styled.span`
   top: 68%;
   left: 184px;
 `;
-    // position: relative;
-    // left: 50px;
-    // bottom: 25px;
 
 const LabelText = styled.span``;
 
@@ -133,42 +131,61 @@ const CheckboxWrapper = styled.div`
   flex-wrap: wrap;
 `;
 
-function Checkbox({
-  id,
-  name,
-  label,
-  error,
-  disabled,
-  hideLabel,
-  ...restCheckboxProps 
-}) {
-  const errorId = `${id}-error`
 
-  return (
-    <CheckboxWrapper>
-      <Label disabled={disabled}>
-        <Input
-          id={id}
-          type="checkbox"
-          name={name}
-          disabled={disabled}
-          aria-invalid={!!error}
-          aria-describedby={errorId}
-          {...restCheckboxProps}
-        />
-        <LabelText>
-          <OptionalText hideLabel={hideLabel}>{label}</OptionalText>
-        </LabelText>
-      </Label>
-    </CheckboxWrapper>
-  );
-}
+const Checkbox = forwardRef(
+  function CheckboxRef({
+    id,
+    name,
+    label,
+    disabled,
+    hideLabel,
+    ...restCheckboxProps 
+  }, ref) {
+    const [valueAllCheckbox, setValueAllCheckbox] = useState([])
+
+    useImperativeHandle(ref, () => ({
+      onChangeValueByRef(event) {
+        !valueAllCheckbox.includes(event.target.name) 
+          ? setValueAllCheckbox([...valueAllCheckbox, event.target.name]) 
+          : setValueAllCheckbox(valueAllCheckbox.filter(item => item !== event.target.name)); 
+      },
+      setValueByRef() {
+        return valueAllCheckbox
+      },
+      initialValueByRef() {
+        setValueAllCheckbox([])
+      }
+    }))
+
+    return (
+      <CheckboxWrapper>
+        <Label disabled={disabled}>
+          <Input
+            id={id}
+            ref={ref}
+            name={name}
+            type="checkbox"
+            disabled={disabled}
+            {...restCheckboxProps}
+          />
+          <LabelText>
+            <OptionalText hideLabel={hideLabel}>{label}</OptionalText>
+          </LabelText>
+        </Label>
+      </CheckboxWrapper>
+    )
+  }
+)
+
+Checkbox.displayName = 'Checkbox'
 
 Checkbox.defaultProps = {
-  hideLabel: false,
   error: null,
-  hasError: false,
-  disabled: false
+  disabled: false,
+  hideLabel: false,
+  // hasError: false,
+  // checked: false,
+  // value: false,
 };
 
 export default memo(Checkbox);
