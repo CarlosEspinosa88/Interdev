@@ -105,7 +105,7 @@ const SelectInput = forwardRef(
     Label,
     hasError,
     errorMessage,
-    ...otherSelectProps
+    ...restSelectProps
   }, ref) {
 
     const [value, setValue] = useState({
@@ -152,7 +152,7 @@ const SelectInput = forwardRef(
             value={value?.[name]}
             disabled={disabled}
             hasError={hasError}
-            {...otherSelectProps}
+            {...restSelectProps}
           >
             {options?.map((option) => (
               <Option {...option} key={option.value} />
@@ -169,7 +169,7 @@ const SelectInput = forwardRef(
   }
 )
 
-SelectInput.displayName = 'Input'
+SelectInput.displayName = 'SelectInput'
 
 SelectInput.defaultProps = {
   id: 'select-id',

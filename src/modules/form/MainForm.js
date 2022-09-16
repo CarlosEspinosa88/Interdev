@@ -2,9 +2,10 @@ import { useRef, useState, useEffect, useCallback, useMemo, useReducer } from 'r
 import Layout from '../../components/Layout'
 import Input from '../../components/Input'
 import SelectInput from '../../components/SelectInput'
+import Checkbox from '../../components/Checkbox'
 import Button from '../../components/Button'
 import useReducerHook from './hook/useReducerHook'
-import { ERROR_MESSAGES, SENIORITY, SALARY, TYPE, CURRENT_DATE } from '../../constanst/index'
+import { ERROR_MESSAGES, SENIORITY, SALARY, TYPE, CURRENT_DATE, FRAMEWORKS } from '../../constanst/index'
 
 export default function MainForm() {
   const { state, dispatch } = useReducerHook()
@@ -13,13 +14,15 @@ export default function MainForm() {
   const seniority = useRef(null)
   const salary = useRef(null)
   const date = useRef(null)
+  const study = useRef(null)
 
   const [userData, setUserData] = useState({
     name: '',
     lastName: '',
     seniority: '',
     salary: '',
-    date: ''
+    date: '',
+    study: []
   })
 
   const [hasError, setHasError] = useState({
@@ -28,6 +31,7 @@ export default function MainForm() {
     seniority: false,
     salary: false,
     date: false,
+    study: false,
   })
 
   const [typeError, setTypeError] = useState({
@@ -35,7 +39,8 @@ export default function MainForm() {
     lastName: '',
     seniority: '',
     salary: '',
-    date: ''
+    date: '',
+    study: ''
   })
 
   const DYNAMIC_REF = useMemo(() => {
@@ -44,7 +49,8 @@ export default function MainForm() {
       lastName,
       seniority,
       salary,
-      date
+      date,
+      study
     }
   }, [])
 
@@ -137,10 +143,43 @@ export default function MainForm() {
     }, [DYNAMIC_REF]
   )
 
+  const handleOnBlurInputCheckbox = useCallback(
+    function onBlurCheckbox(event) {
+      const valueCheckbox = study.current.setValueByRef();
+
+      if (valueCheckbox.length > 0) {
+        setHasError((prevState) => ({
+          ...prevState,
+          study: false
+        }))
+        setTypeError((prevState) => ({
+          ...prevState,
+          study: ''
+        }))
+      } else {
+        setHasError((prevState) => ({
+          ...prevState,
+          study: true
+        }))
+        setTypeError((prevState) => ({
+          ...prevState,
+          study: ERROR_MESSAGES.EMPTY
+        }))
+
+      }
+    }, []
+  )
+
   const handleOnChangeValue = useCallback(
     function onChange(event) {
       DYNAMIC_REF[event.target.name].current.onChangeValueByRef(event)
     }, [DYNAMIC_REF]
+  )
+
+  const handleOnChangeValueCheckbox = useCallback(
+    function onChangeCheckbox(event) {
+      study.current.onChangeValueByRef(event)
+    }, []
   )
 
   function handlePressForm(event) {
@@ -158,6 +197,7 @@ export default function MainForm() {
       date: date.current.setValueByRef('date'),
       seniority: seniority.current.setValueByRef('seniority'),
       salary: salary.current.setValueByRef('salary'),
+      study: study.current.setValueByRef(),
     }))
   }
 
@@ -169,6 +209,7 @@ export default function MainForm() {
         date.current.initialValueByRef('date')
         seniority.current.initialValueByRef('seniority')
         salary.current.initialValueByRef('salary')
+        study.current.initialValueByRef()
   
         dispatch({
           type: 'setLoadingButton',
@@ -184,11 +225,13 @@ export default function MainForm() {
     const valueDate = date?.current?.setValueByRef('date')
     const valueSeniority = seniority?.current?.setValueByRef('seniority')
     const valueSalary = salary?.current?.setValueByRef('salary')
+    const valueAllCheckbox = study?.current?.setValueByRef()
+    const includeStudy = valueAllCheckbox.length > 0
     const includeErrors = Object.values(hasError).includes(true)
 
-    
-    const IMCOMPLETE_DATA = (
+    const INCOMPLETE_DATA = (
       includeErrors || 
+      !includeStudy ||
       !valueName || 
       !valueLastName || 
       !valueSeniority || 
@@ -196,14 +239,14 @@ export default function MainForm() {
       !valueDate
     )
 
-    if (IMCOMPLETE_DATA) {
+    if (INCOMPLETE_DATA) {
       dispatch({
         type: 'setDisabledButton',
         payload: { disabled: true }
       })
     } 
     
-    else if (!IMCOMPLETE_DATA) {
+    else if (!INCOMPLETE_DATA) {
       dispatch({
         type: 'setDisabledButton',
         payload: { disabled: false }
@@ -278,6 +321,20 @@ export default function MainForm() {
           onBlur={handleOnBlurInputDates}
           onChange={handleOnChangeValue}
         />
+
+        <p>{typeError.study}</p>
+        {FRAMEWORKS?.map((item, index) => (
+          <div key={item.value}>
+            <Checkbox
+              ref={study}
+              id={index}
+              name={item.value}
+              label={item.label}
+              onChange={handleOnChangeValueCheckbox}
+              onBlur={handleOnBlurInputCheckbox}
+            />
+          </div>
+        ))}
         <Button
           disabled={state.disabled}
           loading={state.loading}
@@ -291,6 +348,11 @@ export default function MainForm() {
       <p>{userData.seniority}</p>
       <p>{userData.salary}</p>
       <p>{userData.date}</p>
+      <div>
+        {userData.study.map((item) => (
+          <p key={item}>{item}</p>
+        ))}
+      </div>
     </>
   )
 }
