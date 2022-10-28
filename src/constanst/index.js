@@ -45,26 +45,32 @@ export const ERROR_MESSAGES = {
 
 export const FRAMEWORKS = [
   {
+    id: '001',
     label: "React",
     value: "react",
   },
   {
+    id: '002',
     label: "Angular",
     value: "angular",
   },
   {
+    id: '003',
     label: "Svelte",
     value: "svelte",
   },
   {
+    id: '004',
     label: "NodeJS",
     value: "node-js",
   },
   {
+    id: '005',
     label: "Vue",
     value: "vue",
   },
   {
+    id: '006',
     label: "Vanilla JS",
     value: "vanilla-js",
   },
