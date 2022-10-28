@@ -5,6 +5,7 @@ import SelectInput from '../../components/SelectInput'
 import Checkbox from '../../components/Checkbox'
 import Button from '../../components/Button'
 import useReducerHook from './hook/useReducerHook'
+import CheckboxGroup from '../chekcbox-group/CheckboxGroup'
 import { ERROR_MESSAGES, SENIORITY, SALARY, TYPE, CURRENT_DATE, FRAMEWORKS } from '../../constanst/index'
 
 export default function MainForm() {
@@ -14,8 +15,11 @@ export default function MainForm() {
   const seniority = useRef(null)
   const salary = useRef(null)
   const date = useRef(null)
-  const study = useRef(null)
 
+  const [valueAllCheckbox, setValueAllCheckbox] = useState([])
+  const [stateChecked, setStateChecked] = useState(
+    Array(FRAMEWORKS.length).fill(false)
+  )
   const [userData, setUserData] = useState({
     name: '',
     lastName: '',
@@ -49,8 +53,7 @@ export default function MainForm() {
       lastName,
       seniority,
       salary,
-      date,
-      study
+      date
     }
   }, [])
 
@@ -143,43 +146,10 @@ export default function MainForm() {
     }, [DYNAMIC_REF]
   )
 
-  const handleOnBlurInputCheckbox = useCallback(
-    function onBlurCheckbox(event) {
-      const valueCheckbox = study.current.setValueByRef();
-
-      if (valueCheckbox.length > 0) {
-        setHasError((prevState) => ({
-          ...prevState,
-          study: false
-        }))
-        setTypeError((prevState) => ({
-          ...prevState,
-          study: ''
-        }))
-      } else {
-        setHasError((prevState) => ({
-          ...prevState,
-          study: true
-        }))
-        setTypeError((prevState) => ({
-          ...prevState,
-          study: ERROR_MESSAGES.EMPTY
-        }))
-
-      }
-    }, []
-  )
-
   const handleOnChangeValue = useCallback(
     function onChange(event) {
       DYNAMIC_REF[event.target.name].current.onChangeValueByRef(event)
     }, [DYNAMIC_REF]
-  )
-
-  const handleOnChangeValueCheckbox = useCallback(
-    function onChangeCheckbox(event) {
-      study.current.onChangeValueByRef(event)
-    }, []
   )
 
   function handlePressForm(event) {
@@ -197,7 +167,7 @@ export default function MainForm() {
       date: date.current.setValueByRef('date'),
       seniority: seniority.current.setValueByRef('seniority'),
       salary: salary.current.setValueByRef('salary'),
-      study: study.current.setValueByRef(),
+      study: valueAllCheckbox
     }))
   }
 
@@ -209,7 +179,7 @@ export default function MainForm() {
         date.current.initialValueByRef('date')
         seniority.current.initialValueByRef('seniority')
         salary.current.initialValueByRef('salary')
-        study.current.initialValueByRef()
+        setStateChecked(Array(FRAMEWORKS.length).fill(false))
   
         dispatch({
           type: 'setLoadingButton',
@@ -225,9 +195,8 @@ export default function MainForm() {
     const valueDate = date?.current?.setValueByRef('date')
     const valueSeniority = seniority?.current?.setValueByRef('seniority')
     const valueSalary = salary?.current?.setValueByRef('salary')
-    const valueAllCheckbox = study?.current?.setValueByRef()
-    const includeStudy = valueAllCheckbox.length > 0
     const includeErrors = Object.values(hasError).includes(true)
+    const includeStudy = valueAllCheckbox.length > 0
 
     const INCOMPLETE_DATA = (
       includeErrors || 
@@ -256,7 +225,7 @@ export default function MainForm() {
     if (state.sendData) {
       resetValues()
     }
-  }, [hasError, state.sendData, dispatch, resetValues])
+  }, [hasError, state.sendData, dispatch, resetValues, valueAllCheckbox])
 
   return (
     <>
@@ -321,20 +290,16 @@ export default function MainForm() {
           onBlur={handleOnBlurInputDates}
           onChange={handleOnChangeValue}
         />
-
-        <p>{typeError.study}</p>
-        {FRAMEWORKS?.map((item, index) => (
-          <div key={item.value}>
-            <Checkbox
-              ref={study}
-              id={index}
-              name={item.value}
-              label={item.label}
-              onChange={handleOnChangeValueCheckbox}
-              onBlur={handleOnBlurInputCheckbox}
-            />
-          </div>
-        ))}
+        <CheckboxGroup
+          valueAllCheckbox={valueAllCheckbox}
+          setValueAllCheckbox={setValueAllCheckbox}
+          hasError={hasError.study}
+          typeError={typeError.study}
+          setHasError={setHasError}
+          setTypeError={setTypeError}
+          stateChecked={stateChecked}
+          setStateChecked={setStateChecked}
+        />
         <Button
           disabled={state.disabled}
           loading={state.loading}
