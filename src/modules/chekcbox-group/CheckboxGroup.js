@@ -4,7 +4,7 @@ import Checkbox from '../../components/Checkbox'
 import { FRAMEWORKS, ERROR_MESSAGES } from '../../constanst/index'
 
 const MainContainer = styled.div`
-  padding: 1rem 0 0 0;
+  padding: 0 0 0.5rem 0;
 `
 
 const StyledCheckboxesContainer = styled.div`
@@ -74,7 +74,6 @@ function CheckboxGroup({
     }, [setStateChecked]
   )
 
-
   const handleOnBlurInputCheckbox = useCallback(
     function onBlurCheckbox(event) {
 
@@ -94,13 +93,12 @@ function CheckboxGroup({
         }))
         setTypeError((prevState) => ({
           ...prevState,
-          study: ERROR_MESSAGES.EMPTY
+          study: ERROR_MESSAGES.CHECBOXES
         }))
 
       }
     }, [setHasError, setTypeError, valueAllCheckbox ]
   )
-
 
   return (
     <MainContainer>
