@@ -7,8 +7,8 @@ export async function sendDataToFirebase({
   seniority,
   experience,
   salary,
-  entranceDateToWork,
-  framework
+  date,
+  study
 }) {
   try {
     const docRef = await addDoc(collection(db, "users"), {
@@ -17,8 +17,8 @@ export async function sendDataToFirebase({
       seniority,
       experience,
       salary,
-      entranceDateToWork,
-      framework
+      date,
+      study
     })
   } catch (e) {
     console.error("Error adding document: ", e)
