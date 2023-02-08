@@ -266,7 +266,7 @@ function HomeForm() {
                   name='github'
                   id='id-github-url'
                   label='Github url'
-                  value={`github.com/${githubClient}`}
+                  placeholder={`github.com/${githubClient}`}
                 />
               </StyledSecondColumnAvatar>
             </StyledGithubContainer>

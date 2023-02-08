@@ -1,4 +1,7 @@
 import { useRef, useState, useEffect, useCallback, useMemo } from 'react'
+import { logoutGithubAuth } from '../../firebase/logout'
+import { redirectToGithub } from '../../firebase/login'
+import { sendDataToFirebase } from '../../firebase/sendData'
 import Image from 'next/image'
 import logo from '../../../public/githubo.png'
 import Layout from '../../components/Layout'
@@ -25,12 +28,12 @@ import {
   StyledFirstColumnAvatar,
   StyledSecondColumnAvatar,
   StyledFirstColumnContainer,
-  // StyledSecondColumContainer,
-  // StyledLoginContainer,
-  // StyledInnerButtonContainer,
-  // StyledFaviconContainer,
-  // StyledContainerThanks,
-  // StyledCentered,
+  StyledSecondColumContainer,
+  StyledLoginContainer,
+  StyledInnerButtonContainer,
+  StyledFaviconContainer,
+  StyledContainerThanks,
+  StyledCentered,
  } from './styles'
 
 export default function MainForm() {
@@ -41,21 +44,15 @@ export default function MainForm() {
   const date = useRef(null)
   const experience = useRef(null)
 
-  const [valueAllCheckbox, setValueAllCheckbox] = useState([])
-  const [stateChecked, setStateChecked] = useState(
-    Array(FRAMEWORKS.length).fill(false)
-  )
-  
+  const [userData, setUserData] = useState(null)
   const [isSendedData, setIsSendedData] = useState(false)
-  const [userData, setUserData] = useState({
-    name: '',
-    seniority: '',
-    salary: '',
-    experience: '',
-    date: '',
-    study: []
+  const [valueAllCheckbox, setValueAllCheckbox] = useState([])
+  const [stateChecked, setStateChecked] = useState(Array(FRAMEWORKS.length).fill(false))
+  const [stateButton, setStateButton] = useState({
+    isLoading: false,
+    isDisabled: false,
   })
-
+  const [userName, setUserName] = useState('')
   const [hasError, setHasError] = useState({
     name: false,
     seniority: false,
@@ -64,7 +61,6 @@ export default function MainForm() {
     date: false,
     study: false,
   })
-
   const [typeError, setTypeError] = useState({
     name: '',
     seniority: '',
@@ -73,7 +69,6 @@ export default function MainForm() {
     date: '',
     study: ''
   })
-
   const DYNAMIC_REF = useMemo(() => {
     return {
       name,
@@ -83,7 +78,8 @@ export default function MainForm() {
       experience
     }
   }, [])
-
+  const githubClient = userData?.auth?.currentUser?.reloadUserInfo?.screenName
+  
   const handleOnBlurInputText = useCallback(
     function onBlurText(event) {
       const target = event.target.name;
@@ -179,7 +175,7 @@ export default function MainForm() {
     }, [DYNAMIC_REF]
   )
 
-  function handlePressForm(event) {
+  function handleOnSubmitForm(event) {
     event.preventDefault();
 
     dispatch({
@@ -187,15 +183,24 @@ export default function MainForm() {
       payload: { loading: true, sendData: true }
     })
 
-    setUserData((prevState) => ({
-      ...prevState,
+    setUserName(name.current.setValueByRef('name'))
+    sendDataToFirebase({
+      gitHub: `github.com/${githubClient}`,
       name: name.current.setValueByRef('name'),
-      date: date.current.setValueByRef('date'),
       seniority: seniority.current.setValueByRef('seniority'),
-      salary: salary.current.setValueByRef('salary'),
       experience: experience.current.setValueByRef('experience'),
+      salary: salary.current.setValueByRef('salary'),
+      date: date.current.setValueByRef('date'),
       study: valueAllCheckbox
-    }))
+    })
+
+    setTimeout(() => {
+      logoutGithubAuth(setUserData, setIsSendedData)
+      setStateButton((prevState) => ({
+        ...prevState,
+        isLoading: false,
+      }))
+    }, 2000)
   }
 
   const resetValues = useCallback(
@@ -207,6 +212,7 @@ export default function MainForm() {
         salary.current.initialValueByRef('salary')
         experience.current.initialValueByRef('experience')
         setStateChecked(Array(FRAMEWORKS.length).fill(false))
+        setValueAllCheckbox([])
   
         dispatch({
           type: 'setLoadingButton',
@@ -215,6 +221,10 @@ export default function MainForm() {
       })
     }, [dispatch]
   )
+
+  function handleLoginToInit() {
+    redirectToGithub(setUserData);
+  }
 
   useEffect(() => {
     const valueName = name?.current?.setValueByRef('name')
@@ -254,138 +264,149 @@ export default function MainForm() {
     }
   }, [hasError, state.sendData, dispatch, resetValues, valueAllCheckbox])
 
-  const githubClient = userData?.auth?.currentUser?.reloadUserInfo?.screenName
-
   return (
     <>
-      <form onSubmit={handlePressForm}>
-        <StyledFormContainer>
-          <StyledGithubContainer>
-            <StyledFirstColumnAvatar>
-              <StyledAvatar>
-                <Image
-                  height="200"
-                  width="200"
-                  src={userData?.photoURL || logo }
-                  alt='avatar-github'
+      {userData ? (
+        <form onSubmit={handleOnSubmitForm}>
+          <StyledFormContainer>
+            <StyledGithubContainer>
+              <StyledFirstColumnAvatar>
+                <StyledAvatar>
+                  <Image
+                    height="200"
+                    width="200"
+                    src={userData?.photoURL || logo }
+                    alt='avatar-github'
+                  />
+                </StyledAvatar>
+              </StyledFirstColumnAvatar>
+              <StyledSecondColumnAvatar>
+                <Input
+                  disabled
+                  required
+                  name='github'
+                  id='id-github-url'
+                  label='Github url'
+                  placeholder={`github.com/${githubClient}`}
                 />
-              </StyledAvatar>
-            </StyledFirstColumnAvatar>
-            <StyledSecondColumnAvatar>
+              </StyledSecondColumnAvatar>
+            </StyledGithubContainer>
+            <div>
               <Input
-                disabled
+                ref={name}
                 required
-                name='github'
-                id='id-github-url'
-                label='Github url'
-                value={`github.com/${githubClient}`}
+                name='name'
+                id='id-name'
+                hasError={hasError.name}
+                label='Nombre y apellido*'
+                errorMessage={typeError.name}
+                placeholder='Ingresa tu nombre completo'
+                onBlur={handleOnBlurInputText}
+                onChange={handleOnChangeValue}
               />
-            </StyledSecondColumnAvatar>
-          </StyledGithubContainer>
-          <div>
-            <Input
-              ref={name}
-              required
-              name='name'
-              id='id-name'
-              hasError={hasError.name}
-              label='Nombre y apellido*'
-              errorMessage={typeError.name}
-              placeholder='Ingresa tu nombre completo'
-              onBlur={handleOnBlurInputText}
-              onChange={handleOnChangeValue}
+            </div>
+            <StyledSelectsContainer>
+              <StyledFirstColumnContainer>
+                <SelectInput
+                  ref={seniority}
+                  required
+                  id='id-seniority'
+                  name='seniority'
+                  Label='Seniority*'
+                  hasError={hasError.seniority}
+                  errorMessage={typeError.seniority}
+                  options={SENIORITY}
+                  onBlur={handleOnBlurInputSelect}
+                  onChange={handleOnChangeValue}
+                />
+              </StyledFirstColumnContainer>
+              <StyledFirstColumnContainer>
+                <SelectInput
+                  ref={salary}
+                  required
+                  id='id-salary'
+                  name='salary'
+                  Label='Aspiración salarial*'
+                  hasError={hasError.salary}
+                  errorMessage={typeError.salary}
+                  options={SALARY}
+                  onBlur={handleOnBlurInputSelect}
+                  onChange={handleOnChangeValue}
+                />
+              </StyledFirstColumnContainer>
+            </StyledSelectsContainer>
+            <StyledSelectsContainer>
+              <StyledFirstColumnContainer>
+                <SelectInput
+                  ref={experience}
+                  required
+                  id='id-experience'
+                  name='experience'
+                  Label='Años de experiencia*'
+                  hasError={hasError.experience}
+                  errorMessage={typeError.experience}
+                  options={EXPERIENCE}
+                  onBlur={handleOnBlurInputSelect}
+                  onChange={handleOnChangeValue}
+                />
+              </StyledFirstColumnContainer>
+              <StyledFirstColumnContainer>
+                <Input
+                  ref={date}
+                  required
+                  type={TYPE.DATE}
+                  id='id-date'
+                  name='date'
+                  label='Fecha de ingreso*'
+                  hasError={hasError.date}
+                  errorMessage={typeError.date}
+                  onBlur={handleOnBlurInputDates}
+                  onChange={handleOnChangeValue}
+                />
+              </StyledFirstColumnContainer>
+            </StyledSelectsContainer>
+            <CheckboxGroup
+              valueAllCheckbox={valueAllCheckbox}
+              setValueAllCheckbox={setValueAllCheckbox}
+              hasError={hasError.study}
+              typeError={typeError.study}
+              setHasError={setHasError}
+              setTypeError={setTypeError}
+              stateChecked={stateChecked}
+              setStateChecked={setStateChecked}
             />
-          </div>
-          <StyledSelectsContainer>
-            <StyledFirstColumnContainer>
-              <SelectInput
-                ref={seniority}
-                required
-                id='id-seniority'
-                name='seniority'
-                Label='Seniority*'
-                hasError={hasError.seniority}
-                errorMessage={typeError.seniority}
-                options={SENIORITY}
-                onBlur={handleOnBlurInputSelect}
-                onChange={handleOnChangeValue}
-              />
-            </StyledFirstColumnContainer>
-            <StyledFirstColumnContainer>
-              <SelectInput
-                ref={salary}
-                required
-                id='id-salary'
-                name='salary'
-                Label='Aspiración salarial*'
-                hasError={hasError.salary}
-                errorMessage={typeError.salary}
-                options={SALARY}
-                onBlur={handleOnBlurInputSelect}
-                onChange={handleOnChangeValue}
-              />
-            </StyledFirstColumnContainer>
-          </StyledSelectsContainer>
-          <StyledSelectsContainer>
-            <StyledFirstColumnContainer>
-              <SelectInput
-                ref={experience}
-                required
-                id='id-experience'
-                name='experience'
-                Label='Años de experiencia*'
-                hasError={hasError.experience}
-                errorMessage={typeError.experience}
-                options={EXPERIENCE}
-                onBlur={handleOnBlurInputSelect}
-                onChange={handleOnChangeValue}
-              />
-            </StyledFirstColumnContainer>
-            <StyledFirstColumnContainer>    
-              <Input
-                ref={date}
-                required
-                type={TYPE.DATE}
-                id='id-date'
-                name='date'
-                label='Fecha de ingreso*'
-                hasError={hasError.date}
-                errorMessage={typeError.date}
-                onBlur={handleOnBlurInputDates}
-                onChange={handleOnChangeValue}
-              />
-            </StyledFirstColumnContainer>
-          </StyledSelectsContainer>
-          <CheckboxGroup
-            valueAllCheckbox={valueAllCheckbox}
-            setValueAllCheckbox={setValueAllCheckbox}
-            hasError={hasError.study}
-            typeError={typeError.study}
-            setHasError={setHasError}
-            setTypeError={setTypeError}
-            stateChecked={stateChecked}
-            setStateChecked={setStateChecked}
-          />
+          </StyledFormContainer>
           <Button
             type={TYPE.SUBMIT}
             disabled={state.disabled}
             loading={state.loading}
-            onClick={handlePressForm}
+            onClick={handleOnSubmitForm}
           >
             Enviar información
           </Button>
-        </StyledFormContainer>
-      </form>
-      <p>{userData.name}</p>
-      <p>{userData.seniority}</p>
-      <p>{userData.salary}</p>
-      <p>{userData.experience}</p>
-      <p>{userData.date}</p>
-      <div>
-        {userData.study.map((item) => (
-          <p key={item}>{item}</p>
-        ))}
-      </div>
+        </form>
+      ) : (
+        <StyledLoginContainer>
+          {isSendedData && !userData ? (
+            <StyledContainerThanks>
+              <StyledCentered>
+                <h1>!Gracias {userName}!</h1>
+                <div><span>Mientras revisamos toda tu información {' '}</span></div>
+                <div><span>conoce más de Ayenda.</span></div>
+              </StyledCentered>
+            </StyledContainerThanks>
+          ) : (
+            <Button onClick={handleLoginToInit}>
+              <StyledInnerButtonContainer>
+                <StyledFaviconContainer>
+                  <Image width="30" height="30" src={logo} alt="ico-github"/>
+                </StyledFaviconContainer>
+                <div><span>login con Github</span></div>
+              </StyledInnerButtonContainer>
+            </Button>
+          )}
+        </StyledLoginContainer>
+      )}
     </>
   )
 }
